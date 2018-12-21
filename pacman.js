@@ -1,6 +1,8 @@
 // Setup initial game stats
 let score = 0;
 let lives = 2;
+let powerPellets = 4;
+let ghostsEaten = 0;
 
 
 // Define your ghosts here
@@ -34,7 +36,7 @@ const clyde = {
   edible: false
 };
 
-
+let ghosts = [inky, blinky, pinky, clyde];
 
 // replace this comment with your four ghosts setup as objects
 
@@ -54,12 +56,17 @@ function clearScreen() {
 }
 
 function displayStats() {
-  console.log(`Score: ${score}     Lives: ${lives}`);
+  console.log(`Score: ${score}     Lives: ${lives}    Power Pellets: ${powerPellets}`);
 }
 
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
+  console.log('(p) Eat Power-Pellet');
+  console.log('(1) Eat Inky (edible');
+  console.log('(2) Eat Blinky(inedible)');
+  console.log('(3) Eat Pinky(edible');
+  console.log('(4) Eat Clyde(edible');
   console.log('(q) Quit');
 }
 
@@ -76,6 +83,40 @@ function eatDot() {
 }
 
 
+function eatGhost(ghost) {
+  if (ghost.eadible === false){
+    lives --;
+    console.log(`${ghost.name} eats Pacman! The ghost's colour is ${ghost.colour}.`);
+  } else {
+    console.log(`You eat ${ghost.name}.Their character was very ${ghost.character}.`);
+    ghostsEaten ++;
+    if (ghostsEaten === 1) {
+      score += 200;
+    } else if (ghostsEaten === 2) {
+      process.exit();
+    } else if (ghostsEaten === 3) {
+      score += 800;
+    } else if (ghostsEaten > 3) {
+      score += 1600;
+      // ghostsEaten = 0;
+    }
+    ghost.edible = false;
+  }
+  if (lives < 0){
+    console.log('Game Over')
+    process.exit();
+  }
+}
+function eatPowerPellet(){
+  score += 50;
+  for (i in ghosts) {
+    ghosts[i].edible = true;
+  }
+  powerPellets --;
+}
+
+
+
 // Process Player's Input
 function processInput(key) {
   switch(key) {
@@ -85,6 +126,25 @@ function processInput(key) {
       break;
     case 'd':
       eatDot();
+      break;
+    case 'p':
+      if (powerPellets > 0) {
+        eatPowerPellet();
+      } else {
+        console.log('\nNo more Power Pellets!');
+      }
+      break;
+    case '1':
+      eatGhost(inky);
+      break;
+    case '2':
+      eatGhost(blinky);
+      break;
+    case '3':
+      eatGhost(pinky);
+      break;
+    case '4':
+      eatGhost(clyde);
       break;
     default:
       console.log('\nInvalid Command!');
